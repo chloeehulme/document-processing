@@ -1,0 +1,47 @@
+# Writing an Azure Function in Python for M1 Macs
+
+Steps to patch worker issue:
+
+1. Switch terminal over to rosetta in 'get info' section
+2. Confirm terminal arch with uname -m -> should read ```x86_64```
+3. Install Azure Functions Core Tools with:
+
+    ``` bash
+        brew tap azure/functions
+        brew install azure-functions-core-tools@4
+    ```
+
+    or
+
+    ```bash
+        npm install -g azure-functions-core-tools@4 --unsafe-perm true
+    ```
+
+4. Open the python worker configuration file with:
+
+    ```bash
+        sudo nano /usr/local/lib/node_modules/azure-functions-core-tools/bin/workers/python/worker.config.json
+    ```
+
+5. Change the architecture in the 'defaultWorkerPath' to:
+
+    ```bash
+        "defaultWorkerPath": "%FUNCTIONS_WORKER_RUNTIME_VERSION%/{os}/X64/worker.py"
+    ```
+
+6. Now download an osx x64 release of the Azure Function Core Tools at <https://github.com/Azure/azure-functions-core-tools/releases>
+
+7. Create a directory to extract the contents ```mkdir -p ~/azfunc-x64```
+8. Confirm the available python versions for the worker files with ```find ~/azfunc-x64/workers/python -name worker.py```
+9. Copy the worker file from the extracted zip into the globally installed Azure Functions core tools with:
+
+    ```bash
+        sudo cp -R ~/azfunc-x64/workers/python/3.8   /usr/local/lib/node_modules/azure-functions-core-tools/bin/workers/python/
+    ```
+
+10. Confirm the copy was successful with:
+
+    ```bash
+        ls /usr/local/lib/node_modules/azure-functions-core-tools/bin/workers/python/3.8/OSX/X64/worker.py
+    ```
+11. 
